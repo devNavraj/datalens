@@ -7,7 +7,6 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DEFAULT_TIMEZONE: Australia/Sydney
-    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
     # Dev-only dependency install; prod image will bake these in (Week 6)
     _PIP_ADDITIONAL_REQUIREMENTS: "httpx tenacity pydantic-settings boto3"
     PYTHONPATH: /opt/datalens/src

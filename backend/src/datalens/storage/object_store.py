@@ -1,8 +1,11 @@
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 import boto3
 
 from datalens.config import Settings
+
+if TYPE_CHECKING:
+    from mypy_boto3_s3.client import S3Client
 
 
 class ObjectStore(Protocol):
@@ -38,7 +41,7 @@ class S3ObjectStore:
         self,
         bucket: str,
         *,
-        client: Any | None = None,
+        client: "S3Client | None" = None,
         endpoint_url: str | None = None,
         access_key_id: str | None = None,
         secret_access_key: str | None = None,
@@ -82,3 +85,8 @@ class S3ObjectStore:
             if not response.get("IsTruncated"):
                 return keys
             token = response.get("NextContinuationToken")
+            if not token:
+                raise RuntimeError(
+                    "S3 returned IsTruncated=True without NextContinuationToken; "
+                    "aborting to avoid an infinite pagination loop"
+                )

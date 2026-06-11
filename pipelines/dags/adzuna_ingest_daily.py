@@ -4,6 +4,8 @@ The `datalens` package is importable inside the Airflow containers via
 PYTHONPATH=/opt/datalens/src (see docker/compose.dev.yml).
 """
 
+from datetime import timedelta
+
 import pendulum
 from airflow.decorators import dag, task
 
@@ -17,7 +19,7 @@ from airflow.decorators import dag, task
     default_args={"retries": 2},
 )
 def adzuna_ingest_daily() -> None:
-    @task
+    @task(execution_timeout=timedelta(minutes=10))
     def ingest_to_bronze(ds: str | None = None) -> list[str]:
         from datetime import date
 

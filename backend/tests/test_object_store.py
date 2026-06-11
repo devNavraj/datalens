@@ -61,6 +61,18 @@ class TestS3ObjectStore:
         with stub:
             assert store.get("bronze/x.json") == b"payload"
 
+    def test_list_raises_on_truncated_response_without_token(
+        self, s3_stub: tuple[S3ObjectStore, Stubber]
+    ) -> None:
+        store, stub = s3_stub
+        stub.add_response(
+            "list_objects_v2",
+            {"Contents": [{"Key": "bronze/a.json"}], "IsTruncated": True},
+            {"Bucket": "datalens", "Prefix": "bronze/"},
+        )
+        with stub, pytest.raises(RuntimeError, match="NextContinuationToken"):
+            store.list("bronze/")
+
     def test_list_paginates_until_not_truncated(
         self, s3_stub: tuple[S3ObjectStore, Stubber]
     ) -> None:

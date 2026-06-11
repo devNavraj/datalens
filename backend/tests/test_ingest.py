@@ -1,8 +1,11 @@
 from collections.abc import Iterator
 from datetime import date
 
+import pytest
+
+from datalens.config import Settings
 from datalens.connectors import BaseConnector, ExtractBatch
-from datalens.ingest import run_ingest
+from datalens.ingest import run_adzuna_ingest, run_ingest
 from datalens.storage import InMemoryObjectStore
 
 
@@ -25,6 +28,12 @@ def test_run_ingest_writes_every_batch_to_bronze() -> None:
     ]
     assert store.list("bronze/stub/") == keys
     assert store.get(keys[1]) == b'{"results": [2]}'
+
+
+def test_run_adzuna_ingest_fails_fast_without_credentials() -> None:
+    settings = Settings(adzuna_app_id=None, adzuna_app_key=None)
+    with pytest.raises(ValueError, match="DATALENS_ADZUNA_APP_ID"):
+        run_adzuna_ingest(settings=settings)
 
 
 def test_run_ingest_defaults_to_today() -> None:

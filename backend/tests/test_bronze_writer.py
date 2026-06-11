@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 from datalens.connectors import BronzeWriter, ExtractBatch
 from datalens.storage import InMemoryObjectStore
 
@@ -23,6 +25,17 @@ def test_write_maps_unknown_content_type_to_bin_extension() -> None:
     key = writer.write("upload", batch, date(2026, 6, 10))
 
     assert key.endswith("/blob.bin")
+
+
+def test_rejects_path_traversal_in_source_and_batch_name() -> None:
+    store = InMemoryObjectStore()
+    writer = BronzeWriter(store)
+
+    with pytest.raises(ValueError, match="unsafe bronze key parts"):
+        writer.write("../secret", ExtractBatch(name="ok", payload=b"{}"), date(2026, 6, 10))
+    with pytest.raises(ValueError, match="unsafe bronze key parts"):
+        writer.write("adzuna", ExtractBatch(name="a/b", payload=b"{}"), date(2026, 6, 10))
+    assert store.list("") == []
 
 
 def test_csv_content_type_gets_csv_extension() -> None:

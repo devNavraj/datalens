@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     s3_bucket: str = "datalens"
 
     # Adzuna connector
-    adzuna_app_id: str = ""
-    adzuna_app_key: str = ""
+    adzuna_app_id: str | None = None
+    adzuna_app_key: str | None = None
     adzuna_country: str = "au"
     adzuna_category: str = "it-jobs"
     adzuna_results_per_page: int = 50

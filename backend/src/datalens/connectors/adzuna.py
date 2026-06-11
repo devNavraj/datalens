@@ -65,6 +65,8 @@ class AdzunaConnector(BaseConnector):
         retry=retry_if_exception(_is_retryable),
     )
     def _fetch_page(self, page: int) -> httpx.Response:
+        # Adzuna only supports query-param auth (no Authorization header).
+        # Never log full request URLs from this client — credentials are in the query string.
         response = self._client.get(
             f"/jobs/{self._country}/search/{page}",
             params={

@@ -33,6 +33,11 @@ def run_adzuna_ingest(
     ingest_date: date | None = None,
 ) -> list[str]:
     settings = settings or Settings()
+    if not settings.adzuna_app_id or not settings.adzuna_app_key:
+        raise ValueError(
+            "Adzuna credentials not configured — set DATALENS_ADZUNA_APP_ID and "
+            "DATALENS_ADZUNA_APP_KEY (free signup at https://developer.adzuna.com/)"
+        )
     connector = AdzunaConnector(
         settings.adzuna_app_id,
         settings.adzuna_app_key,
@@ -51,7 +56,10 @@ def main() -> None:  # pragma: no cover
     parser.add_argument("source", choices=["adzuna"])
     parser.add_argument("--date", type=date.fromisoformat, default=None, dest="ingest_date")
     args = parser.parse_args()
-    keys = run_adzuna_ingest(ingest_date=args.ingest_date)
+    if args.source == "adzuna":
+        keys = run_adzuna_ingest(ingest_date=args.ingest_date)
+    else:  # argparse choices make this unreachable; guards future connector wiring
+        raise SystemExit(f"no ingest runner wired for source {args.source!r}")
     print(f"wrote {len(keys)} bronze object(s)")
 
 
