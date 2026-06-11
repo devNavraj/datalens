@@ -37,5 +37,11 @@ out/
 pipelines/logs/
 airflow.db
 
+# dbt artifacts & local fixture lake
+pipelines/dbt/target/
+pipelines/dbt/dbt_packages/
+pipelines/dbt/logs/
+.lake/
+
 # Claude Code local settings
 .claude/settings.local.json

@@ -1,0 +1,44 @@
+{
+  "results": [
+    {
+      "id": 5000000001,
+      "title": "Senior Data Engineer",
+      "description": "Duplicate of page 1 listing — must be deduplicated.",
+      "created": "2026-06-08T22:10:05Z",
+      "company": {"display_name": "Acme Analytics"},
+      "location": {"display_name": "Sydney NSW", "area": ["Australia", "New South Wales", "Sydney"]},
+      "salary_min": 140000,
+      "salary_max": 165000,
+      "salary_is_predicted": "0",
+      "category": {"label": "IT Jobs", "tag": "it-jobs"},
+      "redirect_url": "https://example.com/jobs/5000000001"
+    },
+    {
+      "id": 5000000004,
+      "title": "Golang Developer",
+      "description": "Go developer wanted. Microservices with Kafka, Redis and GCP. We let nothing go to waste.",
+      "created": "2026-06-09T05:00:00Z",
+      "company": {"display_name": "Gamma Systems"},
+      "location": {"display_name": "Perth WA", "area": ["Australia", "Western Australia", "Perth"]},
+      "salary_min": 120000,
+      "salary_max": 140000,
+      "salary_is_predicted": "0",
+      "category": {"label": "IT Jobs", "tag": "it-jobs"},
+      "contract_type": "permanent",
+      "contract_time": "full_time",
+      "redirect_url": "https://example.com/jobs/5000000004"
+    },
+    {
+      "id": 5000000005,
+      "title": "Data Analyst",
+      "description": "SQL, Power BI and Excel. Data warehousing exposure preferred. Agile team.",
+      "created": "invalid-date-should-be-dropped",
+      "company": {"display_name": "Delta Insights"},
+      "location": {"display_name": "Adelaide SA", "area": ["Australia", "South Australia", "Adelaide"]},
+      "category": {"label": "IT Jobs", "tag": "it-jobs"},
+      "redirect_url": "https://example.com/jobs/5000000005"
+    }
+  ],
+  "count": 5,
+  "mean": 152000
+}

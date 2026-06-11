@@ -2,21 +2,21 @@
 
 Each week ends with something demoable. TDD throughout: tests first on services/connectors/guardrails.
 
-## Week 1 — Foundations + first pipeline vertical slice
-- [ ] Monorepo scaffold (backend, frontend, pipelines, infra, docker, CI skeleton)
-- [ ] Docker Compose dev stack: Postgres, Airflow, MinIO (local S3), backend
-- [ ] GitHub Actions: ruff + mypy + pytest on PR; eslint + tsc for frontend
-- [ ] `BaseConnector` interface + tests
-- [ ] Adzuna connector: extract → bronze (raw JSON to S3/MinIO)
-- [ ] `adzuna_ingest_daily` DAG skeleton running end-to-end to bronze
+## Week 1 — Foundations + first pipeline vertical slice ✅
+- [x] Monorepo scaffold (backend, frontend, pipelines, infra, docker, CI skeleton)
+- [x] Docker Compose dev stack: Postgres, Airflow, MinIO (local S3), backend
+- [x] GitHub Actions: ruff + mypy + pytest on PR (frontend CI lands Week 3)
+- [x] `BaseConnector` interface + tests
+- [x] Adzuna connector: extract → bronze (raw JSON to S3/MinIO)
+- [x] `adzuna_ingest_daily` DAG skeleton running end-to-end to bronze
 - **Demo:** DAG run lands raw Adzuna data in bronze, CI green.
 
-## Week 2 — Lakehouse + dbt + job-market gold
-- [ ] Silver layer: typed Parquet with pandera validation, dedupe
-- [ ] dbt project: staging → marts (`fct_job_postings`, `dim_skills`, `skill_demand_daily`, salary aggregates); dbt tests
-- [ ] Skill extraction from job descriptions (keyword/taxonomy-based, deterministic)
-- [ ] DuckDB query service in backend with read-only role
-- [ ] API endpoints: datasets list, job-market aggregates
+## Week 2 — Lakehouse + dbt + job-market gold ✅
+- [x] Silver layer: typed Parquet with pandera validation, dedupe
+- [x] dbt project: staging → marts (`fct_job_postings`, `dim_skills`, `skill_demand_daily`, `salary_by_skill`); dbt tests
+- [x] Skill extraction from job descriptions (keyword/taxonomy-based, deterministic)
+- [x] DuckDB query service in backend (read-only, gold table allowlist)
+- [x] API endpoints: datasets list, job-market aggregates (top skills, trends, salaries, summary)
 - **Demo:** `dbt build` green; API returns real skill-demand trends.
 
 ## Week 3 — CSV connector + profiling + dashboard skeleton

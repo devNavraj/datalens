@@ -1,0 +1,16 @@
+name: datalens
+version: "0.1.0"
+profile: datalens
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+models:
+  datalens:
+    staging:
+      +materialized: view
+    marts:
+      # external = written back to the lake as Parquet under {lake}/gold/
+      +materialized: external
+      +format: parquet

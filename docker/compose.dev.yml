@@ -1,24 +1,32 @@
 name: datalens
 
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.10.4-python3.12
+  image: datalens-airflow:dev
+  build:
+    context: .
+    dockerfile: airflow.Dockerfile
   environment: &airflow-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__DEFAULT_TIMEZONE: Australia/Sydney
-    # Dev-only dependency install; prod image will bake these in (Week 6)
-    _PIP_ADDITIONAL_REQUIREMENTS: "httpx tenacity pydantic-settings boto3"
     PYTHONPATH: /opt/datalens/src
     DATALENS_S3_ENDPOINT_URL: http://minio:9000
     DATALENS_S3_ACCESS_KEY_ID: minioadmin
     DATALENS_S3_SECRET_ACCESS_KEY: minioadmin
     DATALENS_S3_BUCKET: datalens
+    DATALENS_LAKE_URI: s3://datalens
     DATALENS_ADZUNA_APP_ID: ${DATALENS_ADZUNA_APP_ID:-}
     DATALENS_ADZUNA_APP_KEY: ${DATALENS_ADZUNA_APP_KEY:-}
+    # dbt: profile reads these; artifacts go to /tmp so the project mount stays read-only
+    DBT_TARGET: dev
+    DBT_S3_ENDPOINT: minio:9000
+    DBT_TARGET_PATH: /tmp/dbt_target
+    DBT_LOG_PATH: /tmp/dbt_logs
   volumes:
     - ../pipelines/dags:/opt/airflow/dags:ro
     - ../backend/src:/opt/datalens/src:ro
+    - ../pipelines/dbt:/opt/datalens/dbt:ro
 
 services:
   postgres:
@@ -73,6 +81,7 @@ services:
       DATALENS_S3_ACCESS_KEY_ID: minioadmin
       DATALENS_S3_SECRET_ACCESS_KEY: minioadmin
       DATALENS_S3_BUCKET: datalens
+      DATALENS_LAKE_URI: s3://datalens
       DATALENS_ADZUNA_APP_ID: ${DATALENS_ADZUNA_APP_ID:-}
       DATALENS_ADZUNA_APP_KEY: ${DATALENS_ADZUNA_APP_KEY:-}
     volumes:

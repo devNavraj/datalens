@@ -7,6 +7,7 @@ from datetime import date
 from datalens.config import Settings
 from datalens.connectors import AdzunaConnector, BaseConnector, BronzeWriter
 from datalens.storage import ObjectStore, S3ObjectStore
+from datalens.transforms import transform_adzuna_bronze
 
 logger = logging.getLogger(__name__)
 
@@ -50,17 +51,31 @@ def run_adzuna_ingest(
     return run_ingest(connector, store, ingest_date)
 
 
+def run_adzuna_silver(
+    settings: Settings | None = None,
+    ingest_date: date | None = None,
+) -> dict[str, str]:
+    """Bronze → silver for one ingest date. Returns {table: silver_key}."""
+    settings = settings or Settings()
+    store = S3ObjectStore.from_settings(settings)
+    return transform_adzuna_bronze(store, ingest_date or date.today())
+
+
 def main() -> None:  # pragma: no cover
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     parser = argparse.ArgumentParser(description="Run a DataLens ingestion job")
     parser.add_argument("source", choices=["adzuna"])
     parser.add_argument("--date", type=date.fromisoformat, default=None, dest="ingest_date")
+    parser.add_argument("--step", choices=["bronze", "silver", "all"], default="all")
     args = parser.parse_args()
-    if args.source == "adzuna":
-        keys = run_adzuna_ingest(ingest_date=args.ingest_date)
-    else:  # argparse choices make this unreachable; guards future connector wiring
+    if args.source != "adzuna":  # argparse choices make this unreachable; guards future wiring
         raise SystemExit(f"no ingest runner wired for source {args.source!r}")
-    print(f"wrote {len(keys)} bronze object(s)")
+    if args.step in ("bronze", "all"):
+        keys = run_adzuna_ingest(ingest_date=args.ingest_date)
+        print(f"bronze: wrote {len(keys)} object(s)")
+    if args.step in ("silver", "all"):
+        written = run_adzuna_silver(ingest_date=args.ingest_date)
+        print(f"silver: wrote {', '.join(written.values())}")
 
 
 if __name__ == "__main__":  # pragma: no cover

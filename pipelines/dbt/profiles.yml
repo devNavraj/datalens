@@ -1,0 +1,25 @@
+datalens:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  outputs:
+    # dev: lake on S3/MinIO (compose sets DBT_S3_ENDPOINT=minio:9000).
+    # The minioadmin defaults are LOCAL DEV ONLY — the prod target (Week 6)
+    # must use env_var() with no fallback so missing creds fail loudly.
+    dev:
+      type: duckdb
+      path: ":memory:"
+      threads: 4
+      extensions: [httpfs, parquet]
+      settings:
+        s3_endpoint: "{{ env_var('DBT_S3_ENDPOINT', 'localhost:9000') }}"
+        s3_access_key_id: "{{ env_var('DATALENS_S3_ACCESS_KEY_ID', 'minioadmin') }}"
+        s3_secret_access_key: "{{ env_var('DATALENS_S3_SECRET_ACCESS_KEY', 'minioadmin') }}"
+        s3_use_ssl: false
+        s3_url_style: path
+      external_root: "{{ env_var('DATALENS_LAKE_URI', 's3://datalens') }}/gold"
+
+    # ci/local: lake is a plain directory (DATALENS_LAKE_URI=/abs/path/.lake)
+    ci:
+      type: duckdb
+      path: ":memory:"
+      threads: 4
+      external_root: "{{ env_var('DATALENS_LAKE_URI') }}/gold"

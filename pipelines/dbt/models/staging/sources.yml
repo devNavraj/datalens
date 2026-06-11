@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: silver
+    description: Validated Parquet written by the datalens bronze→silver transforms.
+    meta:
+      external_location: "{{ env_var('DATALENS_LAKE_URI', 's3://datalens') }}/silver/adzuna/{name}/*/*.parquet"
+    tables:
+      - name: job_postings
+        description: One row per (job_id, ingest_date) — typed, deduped within a day.
+      - name: job_skills
+        description: Exploded skills per job posting, taxonomy-extracted.

@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     s3_secret_access_key: str | None = None
     s3_region: str = "ap-southeast-2"
     s3_bucket: str = "datalens"
+    # Lakehouse root as seen by DuckDB/dbt: s3://<bucket>, or a local dir for tests/CI
+    lake_uri: str = "s3://datalens"
 
     # Adzuna connector
     adzuna_app_id: str | None = None

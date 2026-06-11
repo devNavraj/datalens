@@ -1,3 +1,8 @@
-from datalens.storage.object_store import InMemoryObjectStore, ObjectStore, S3ObjectStore
+from datalens.storage.object_store import (
+    FilesystemObjectStore,
+    InMemoryObjectStore,
+    ObjectStore,
+    S3ObjectStore,
+)
 
-__all__ = ["InMemoryObjectStore", "ObjectStore", "S3ObjectStore"]
+__all__ = ["FilesystemObjectStore", "InMemoryObjectStore", "ObjectStore", "S3ObjectStore"]

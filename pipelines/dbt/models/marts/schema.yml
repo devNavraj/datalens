@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: fct_job_postings
+    description: One row per unique job posting (latest observed version).
+    columns:
+      - name: job_id
+        tests: [unique, not_null]
+      - name: title
+        tests: [not_null]
+      - name: posting_date
+        tests: [not_null]
+
+  - name: dim_skills
+    description: Distinct skills with posting counts.
+    columns:
+      - name: skill
+        tests: [unique, not_null]
+      - name: postings_count
+        tests: [not_null]
+
+  - name: skill_demand_daily
+    description: Daily posting counts per skill — forecasting input.
+    columns:
+      - name: skill
+        tests: [not_null]
+      - name: posting_date
+        tests: [not_null]
+      - name: postings
+        tests: [not_null]
+
+  - name: salary_by_skill
+    description: Salary stats per skill from non-predicted salary postings.
+    columns:
+      - name: skill
+        tests: [unique, not_null]
+      - name: avg_salary
+        tests: [not_null]

@@ -11,6 +11,10 @@ dependencies = [
     "httpx>=0.28",
     "boto3>=1.35",
     "tenacity>=9.0",
+    "pandas>=2.2",
+    "pyarrow>=18.0",
+    "pandera>=0.24",
+    "duckdb>=1.1",
 ]
 
 [project.optional-dependencies]
@@ -20,6 +24,7 @@ dev = [
     "ruff>=0.9",
     "mypy>=1.14",
     "boto3-stubs[s3]>=1.35",
+    "dbt-duckdb>=1.9",
 ]
 
 [project.scripts]

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol
 
 import boto3
@@ -32,6 +33,40 @@ class InMemoryObjectStore:
 
     def list(self, prefix: str) -> list[str]:
         return sorted(k for k in self._objects if k.startswith(prefix))
+
+
+class FilesystemObjectStore:
+    """Maps object keys to files under a root directory.
+
+    Used for the CI/dev fixture lake so DuckDB and dbt can read the same
+    layout from a plain directory instead of S3.
+    """
+
+    def __init__(self, root: Path | str) -> None:
+        self._root = Path(root)
+
+    def put(self, key: str, data: bytes) -> None:
+        path = self._resolve(key)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+
+    def get(self, key: str) -> bytes:
+        return self._resolve(key).read_bytes()
+
+    def list(self, prefix: str) -> list[str]:
+        if not self._root.is_dir():
+            return []
+        return sorted(
+            str(p.relative_to(self._root))
+            for p in self._root.rglob("*")
+            if p.is_file() and str(p.relative_to(self._root)).startswith(prefix)
+        )
+
+    def _resolve(self, key: str) -> Path:
+        path = (self._root / key).resolve()
+        if not path.is_relative_to(self._root.resolve()):
+            raise ValueError(f"key {key!r} escapes store root")
+        return path
 
 
 class S3ObjectStore:
